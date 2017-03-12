@@ -2,9 +2,8 @@
 //  Pin+CoreDataProperties.swift
 //  VirtualTourist
 //
-//  Created by Lisa Litchfield on 3/10/17.
+//  Created by Lisa Litchfield on 3/11/17.
 //  Copyright © 2017 Lisa Litchfield. All rights reserved.
-//  This file was automatically generated and should not be edited.
 //
 
 import Foundation
@@ -17,7 +16,8 @@ extension Pin {
         return NSFetchRequest<Pin>(entityName: "Pin");
     }
 
-    @NSManaged public var annotation: NSData?
+    @NSManaged public var latitude: Double
+    @NSManaged public var longitude: Double
     @NSManaged public var photos: NSSet?
 
 }
