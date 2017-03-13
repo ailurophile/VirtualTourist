@@ -10,6 +10,7 @@ import Foundation
 import MapKit
 
 class PhotoViewController: UICollectionViewController, MKMapViewDelegate {
+    @IBOutlet weak var mapView: MKMapView!
     
 }
 

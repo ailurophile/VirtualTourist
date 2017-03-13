@@ -45,7 +45,7 @@
         <!--Photo View Controller-->
         <scene sceneID="O52-Fu-uQ6">
             <objects>
-                <viewController id="d6a-WV-Q9K" customClass="PhotoViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="d6a-WV-Q9K" customClass="PhotoViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="tjH-Tx-Cgm"/>
                         <viewControllerLayoutGuide type="bottom" id="50q-3a-izc"/>
@@ -82,6 +82,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="mapView" destination="Q5v-dn-bs2" id="uyr-S5-h0N"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LeD-49-lNs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
