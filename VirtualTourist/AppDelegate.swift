@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        checkIfFirstLaunch()
         return true
     }
 
@@ -86,6 +87,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
+        }
+    }
+    func checkIfFirstLaunch() {
+        if UserDefaults.standard.bool(forKey: Keys.Not1stLaunch) {
+            print("App has launched before")
+        } else {
+            print("This is the first launch ever!")
+            let mapSettings = [Keys.LatKey: DefaultsValues.Lat,
+                               Keys.LonKey: DefaultsValues.Lon,
+                               Keys.LatDeltasKey: DefaultsValues.LatDelta,
+                               Keys.LonDeltaKey: DefaultsValues.LonDelta]
+            UserDefaults.standard.setValue(mapSettings, forKey: Keys.SavedMapSettings)
+            UserDefaults.standard.setValue(true, forKey: Keys.Not1stLaunch)
+            UserDefaults.standard.synchronize()
         }
     }
 

@@ -14,6 +14,10 @@ struct Keys {
     static let LonKey = "LongitudeKey"
     static let LatDeltasKey = "LatitudeDeltaKey"
     static let LonDeltaKey = "LongitudeDeltaKey"
+    static let Not1stLaunch = "hasLaunchedBefore"
+    static let SavedMapSettings = "mapSettings"
+    
+    
 }
 struct DefaultsValues {
     static let Lat = 30.0
@@ -31,9 +35,15 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        mapView.delegate = self
         let holdTouch = UILongPressGestureRecognizer(target: self, action: #selector(dropPin(gestureRecognizer:)))
         holdTouch.minimumPressDuration = 2.0
         mapView.addGestureRecognizer(holdTouch)
+        let mapSettings = UserDefaults.standard.value(forKey: Keys.SavedMapSettings) as! [String: Double]
+        print(mapSettings)
+        mapView.centerCoordinate = CLLocationCoordinate2DMake(mapSettings[Keys.LatKey]!, mapSettings[Keys.LonKey]!)
+        let span = MKCoordinateSpan(latitudeDelta: mapSettings[Keys.LatDeltasKey]!, longitudeDelta: mapSettings[Keys.LonDeltaKey]!)
+        mapView.region.span = span
         print(" span = \(mapView.region.span)")
         print("center = \(mapView.centerCoordinate)")
 
@@ -74,6 +84,15 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
         self.present(viewController, animated: true, completion: nil)
+    }
+   //store map settings after mapiew has changed
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool){
+        let mapSettings = [Keys.LatKey: mapView.centerCoordinate.latitude,
+                           Keys.LonKey: mapView.centerCoordinate.longitude,
+                           Keys.LatDeltasKey: mapView.region.span.latitudeDelta,
+                           Keys.LonDeltaKey: mapView.region.span.longitudeDelta]
+        UserDefaults.standard.setValue(mapSettings, forKey: Keys.SavedMapSettings)
+        UserDefaults.standard.synchronize()
     }
     
     deinit {
