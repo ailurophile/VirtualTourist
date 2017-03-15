@@ -9,16 +9,33 @@
 import UIKit
 import MapKit
 
+struct Keys {
+    static let LatKey = "LatitudeKey"
+    static let LonKey = "LongitudeKey"
+    static let LatDeltasKey = "LatitudeDeltaKey"
+    static let LonDeltaKey = "LongitudeDeltaKey"
+}
+struct DefaultsValues {
+    static let Lat = 30.0
+    static let Lon = -40.0
+    static let LatDelta = 125.4
+    static let LonDelta = 112.4
+}
+
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var holdTouch = UILongPressGestureRecognizer(target: self, action: Selector(("dropPin")))
+
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        holdTouch.minimumPressDuration = 1.0
+        let holdTouch = UILongPressGestureRecognizer(target: self, action: #selector(dropPin(gestureRecognizer:)))
+        holdTouch.minimumPressDuration = 2.0
         mapView.addGestureRecognizer(holdTouch)
+        print(" span = \(mapView.region.span)")
+        print("center = \(mapView.centerCoordinate)")
 
     }
     // MARK: - MKMapViewDelegate
@@ -43,10 +60,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // This method will add a pin to the map when user holds touch for 2 seconds
     func dropPin(gestureRecognizer:UIGestureRecognizer){
-        let location = gestureRecognizer.location(in: mapView)
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = mapView.convert(location, toCoordinateFrom: mapView)
-        mapView.addAnnotation(annotation)
+        if gestureRecognizer.state == UIGestureRecognizerState.began{
+            let location = gestureRecognizer.location(in: mapView)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = mapView.convert(location, toCoordinateFrom: mapView)
+            mapView.addAnnotation(annotation)
+        }
     }
     
     
