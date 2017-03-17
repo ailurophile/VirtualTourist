@@ -11,6 +11,8 @@ import MapKit
 
 class PhotoViewController: UICollectionViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
+    let latitude = DefaultsValues.Lat
+    let longitude = DefaultsValues.Lon
     
 }
 

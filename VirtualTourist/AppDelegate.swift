@@ -90,10 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     func checkIfFirstLaunch() {
-        if UserDefaults.standard.bool(forKey: Keys.Not1stLaunch) {
-            print("App has launched before")
-        } else {
-            print("This is the first launch ever!")
+        if !UserDefaults.standard.bool(forKey: Keys.Not1stLaunch) {
             let mapSettings = [Keys.LatKey: DefaultsValues.Lat,
                                Keys.LonKey: DefaultsValues.Lon,
                                Keys.LatDeltasKey: DefaultsValues.LatDelta,

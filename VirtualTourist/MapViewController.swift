@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 struct Keys {
     static let LatKey = "LatitudeKey"
@@ -29,24 +30,49 @@ struct DefaultsValues {
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
+        didSet {
+            // Whenever the frc changes, we execute the search and
+            // reload the table
+            fetchedResultsController?.delegate = self
+            executeSearch()
+        }
+    }
+    
+    // MARK: Initializers
+
+    
+    // Do not worry about this initializer. I has to be implemented
+    // because of the way Swift interfaces with an Objective C
+    // protocol called NSArchiving. It's not relevant.
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        // Set delegate
         mapView.delegate = self
+        //Create touch and hold gesture recognizer
         let holdTouch = UILongPressGestureRecognizer(target: self, action: #selector(dropPin(gestureRecognizer:)))
         holdTouch.minimumPressDuration = 2.0
         mapView.addGestureRecognizer(holdTouch)
+        // Retrieve user's last used map settings
         let mapSettings = UserDefaults.standard.value(forKey: Keys.SavedMapSettings) as! [String: Double]
         print(mapSettings)
         mapView.centerCoordinate = CLLocationCoordinate2DMake(mapSettings[Keys.LatKey]!, mapSettings[Keys.LonKey]!)
         let span = MKCoordinateSpan(latitudeDelta: mapSettings[Keys.LatDeltasKey]!, longitudeDelta: mapSettings[Keys.LonDeltaKey]!)
         mapView.region.span = span
-        print(" span = \(mapView.region.span)")
-        print("center = \(mapView.centerCoordinate)")
-
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        //Create fetch request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true),NSSortDescriptor(key: "longitude", ascending: true)]
+        //Create FetchedResultsController
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        
     }
     // MARK: - MKMapViewDelegate
     
@@ -73,18 +99,28 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         if gestureRecognizer.state == UIGestureRecognizerState.began{
             let location = gestureRecognizer.location(in: mapView)
             let annotation = MKPointAnnotation()
-            annotation.coordinate = mapView.convert(location, toCoordinateFrom: mapView)
+            let coordinates = mapView.convert(location, toCoordinateFrom: mapView)
+            annotation.coordinate = coordinates
             mapView.addAnnotation(annotation)
+            //Get the persistent container
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            let context = delegate.persistentContainer.viewContext
+            //Create newPin managed object
+            let newPin = Pin(entity: Pin.entity(), insertInto: context)
+            newPin.latitude = coordinates.latitude
+            newPin.longitude = coordinates.longitude
+            print("just created a Pin \(newPin)")
         }
     }
-    
-    
-    // This delegate method is implemented to respond to taps. It opens the system browser
-    // to the URL specified in the annotationViews subtitle property.
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
+    // This delegate method is implemented to respond to taps. It presents the Photos view controller.
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
+        print("User selected pin")
+       let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
         self.present(viewController, animated: true, completion: nil)
+//        performSegue(withIdentifier: "showPhotos", sender: self)
     }
+    
+    
    //store map settings after mapiew has changed
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool){
         let mapSettings = [Keys.LatKey: mapView.centerCoordinate.latitude,
@@ -93,6 +129,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                            Keys.LonDeltaKey: mapView.region.span.longitudeDelta]
         UserDefaults.standard.setValue(mapSettings, forKey: Keys.SavedMapSettings)
         UserDefaults.standard.synchronize()
+    }
+    //MARK: Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       
     }
     
     deinit {
@@ -105,5 +146,18 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
 
+}
+//MARK: Core Data suppport
+extension MapViewController: NSFetchedResultsControllerDelegate{
+    func executeSearch() {
+        if let fc = fetchedResultsController {
+            do {
+                try fc.performFetch()
+            } catch let e as NSError {
+                print("Error while trying to perform a search: \n\(e)\n\(fetchedResultsController)")
+            }
+        }
+    }
+   
 }
 
