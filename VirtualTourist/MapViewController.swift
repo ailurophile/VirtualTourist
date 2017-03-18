@@ -10,26 +10,11 @@ import UIKit
 import MapKit
 import CoreData
 
-struct Keys {
-    static let LatKey = "LatitudeKey"
-    static let LonKey = "LongitudeKey"
-    static let LatDeltasKey = "LatitudeDeltaKey"
-    static let LonDeltaKey = "LongitudeDeltaKey"
-    static let Not1stLaunch = "hasLaunchedBefore"
-    static let SavedMapSettings = "mapSettings"
-    
-    
-}
-struct DefaultsValues {
-    static let Lat = 30.0
-    static let Lon = -40.0
-    static let LatDelta = 125.4
-    static let LonDelta = 112.4
-}
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    var storedPins : [NSManagedObject] = []
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
         didSet {
             // Whenever the frc changes, we execute the search and
@@ -70,8 +55,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         //Create fetch request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true),NSSortDescriptor(key: "longitude", ascending: true)]
+        do {
+            storedPins = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as [NSManagedObject]!
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
         //Create FetchedResultsController
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+//        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
     }
     // MARK: - MKMapViewDelegate
@@ -110,6 +100,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             newPin.latitude = coordinates.latitude
             newPin.longitude = coordinates.longitude
             print("just created a Pin \(newPin)")
+//            storedPins.append(newPin)  // i dont think i should do this???
+            //save Pin
+            delegate.saveContext()
         }
     }
     // This delegate method is implemented to respond to taps. It presents the Photos view controller.
