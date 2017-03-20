@@ -8,11 +8,31 @@
 
 import Foundation
 import MapKit
+import  CoreData
 
 class PhotoViewController: UICollectionViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     let latitude = DefaultsValues.Lat
     let longitude = DefaultsValues.Lon
+    var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
+        didSet {
+            // Whenever the frc changes, we execute the search and
+            // reload the table
+            fetchedResultsController?.delegate = self
+            executeSearch()
+        }
+    }
+}
+//MARK: Core Data suppport
+extension PhotoViewController: NSFetchedResultsControllerDelegate{
+    func executeSearch() {
+        if let fc = fetchedResultsController {
+            do {
+                try fc.performFetch()
+            } catch let e as NSError {
+                print("Error while trying to perform a search: \n\(e)\n\(fetchedResultsController)")
+            }
+        }
+    }
     
 }
-

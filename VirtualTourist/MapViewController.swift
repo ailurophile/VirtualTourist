@@ -14,15 +14,8 @@ import CoreData
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var storedPins : [NSManagedObject] = []
-    var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
-        didSet {
-            // Whenever the frc changes, we execute the search and
-            // reload the table
-            fetchedResultsController?.delegate = self
-            executeSearch()
-        }
-    }
+    var storedPins : [Pin] = []
+    
     
     // MARK: Initializers
 
@@ -56,12 +49,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true),NSSortDescriptor(key: "longitude", ascending: true)]
         do {
-            storedPins = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as [NSManagedObject]!
+            let results = try delegate.persistentContainer.viewContext.execute(fetchRequest)
+            print("results = \(results)")
+//            storedPins = results as! [Pin]
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
-        //Create FetchedResultsController
-//        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
     }
     // MARK: - MKMapViewDelegate
@@ -100,16 +93,28 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             newPin.latitude = coordinates.latitude
             newPin.longitude = coordinates.longitude
             print("just created a Pin \(newPin)")
-//            storedPins.append(newPin)  // i dont think i should do this???
+            storedPins.append(newPin)  // i dont think i should do this???
             //save Pin
             delegate.saveContext()
         }
     }
     // This delegate method is implemented to respond to taps. It presents the Photos view controller.
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
-        print("User selected pin")
+        print("User selected pin ")
+        let c = view.annotation?.coordinate
+        print(c)
        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
-        self.present(viewController, animated: true, completion: nil)
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        //Create fetch request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+        let pred = NSPredicate(format: "Pin.latitude = %@[0] AND Pin.longitude = %@[1]", argumentArray: [c?.latitude,c?.longitude])
+        fetchRequest.predicate = pred
+
+        //Create FetchedResultsController
+        viewController.fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+
+        navigationController?.present(viewController, animated: true, completion: nil)
 //        performSegue(withIdentifier: "showPhotos", sender: self)
     }
     
@@ -126,6 +131,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
        
     }
     
@@ -140,17 +146,5 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
 
 }
-//MARK: Core Data suppport
-extension MapViewController: NSFetchedResultsControllerDelegate{
-    func executeSearch() {
-        if let fc = fetchedResultsController {
-            do {
-                try fc.performFetch()
-            } catch let e as NSError {
-                print("Error while trying to perform a search: \n\(e)\n\(fetchedResultsController)")
-            }
-        }
-    }
-   
-}
+
 
