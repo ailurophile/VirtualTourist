@@ -12,8 +12,8 @@ import  CoreData
 
 class PhotoViewController: UICollectionViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
-    let latitude = DefaultsValues.Lat
-    let longitude = DefaultsValues.Lon
+    let latitude = DefaultValues.Lat
+    let longitude = DefaultValues.Lon
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
         didSet {
             // Whenever the frc changes, we execute the search and

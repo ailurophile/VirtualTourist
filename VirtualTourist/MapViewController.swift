@@ -14,7 +14,9 @@ import CoreData
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var storedPins : [Pin] = []
+    var storedPins : [Pin]!
+    var annotations = [MKAnnotation]()
+    
     
     
     // MARK: Initializers
@@ -49,12 +51,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true),NSSortDescriptor(key: "longitude", ascending: true)]
         do {
-            let results = try delegate.persistentContainer.viewContext.execute(fetchRequest)
+            let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
             print("results = \(results)")
-//            storedPins = results as! [Pin]
+            for pin in results{
+                print("pin at coordinates: \(pin.latitude),\(pin.longitude)")
+            }
+            storedPins = results
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        addAnnotationsToMap()
         
     }
     // MARK: - MKMapViewDelegate
@@ -127,6 +133,29 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                            Keys.LonDeltaKey: mapView.region.span.longitudeDelta]
         UserDefaults.standard.setValue(mapSettings, forKey: Keys.SavedMapSettings)
         UserDefaults.standard.synchronize()
+    }
+    
+    private func addAnnotationsToMap(){
+        
+//        annotations.removeAll()
+        for pin in storedPins{
+            let annotation = MapViewController.getAnnotation(pin: pin)
+            annotations.append(annotation)
+            
+        }
+        self.mapView.addAnnotations(annotations)
+    }
+    
+    class func getAnnotation(pin: Pin)-> MKPointAnnotation{
+        let lat = CLLocationDegrees(pin.latitude  )
+        let long = CLLocationDegrees(pin.longitude )
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        //create annotation
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        return annotation
+        
+        
     }
     //MARK: Navigation
     

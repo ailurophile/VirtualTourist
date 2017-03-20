@@ -16,7 +16,7 @@ struct Keys {
     static let Not1stLaunch = "hasLaunchedBefore"
     static let SavedMapSettings = "mapSettings"
 }
-struct DefaultsValues {
+struct DefaultValues {
     static let Lat = 30.0
     static let Lon = -40.0
     static let LatDelta = 125.4

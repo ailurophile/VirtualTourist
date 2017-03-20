@@ -91,10 +91,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     func checkIfFirstLaunch() {
         if !UserDefaults.standard.bool(forKey: Keys.Not1stLaunch) {
-            let mapSettings = [Keys.LatKey: DefaultsValues.Lat,
-                               Keys.LonKey: DefaultsValues.Lon,
-                               Keys.LatDeltasKey: DefaultsValues.LatDelta,
-                               Keys.LonDeltaKey: DefaultsValues.LonDelta]
+            let mapSettings = [Keys.LatKey: DefaultValues.Lat,
+                               Keys.LonKey: DefaultValues.Lon,
+                               Keys.LatDeltasKey: DefaultValues.LatDelta,
+                               Keys.LonDeltaKey: DefaultValues.LonDelta]
             UserDefaults.standard.setValue(mapSettings, forKey: Keys.SavedMapSettings)
             UserDefaults.standard.setValue(true, forKey: Keys.Not1stLaunch)
             UserDefaults.standard.synchronize()
