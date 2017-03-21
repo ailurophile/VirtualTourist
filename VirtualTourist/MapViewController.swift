@@ -49,7 +49,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         //Create fetch request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true),NSSortDescriptor(key: "longitude", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true),NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
         do {
             let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
             print("results = \(results)")
@@ -109,19 +109,30 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         print("User selected pin ")
         let c = view.annotation?.coordinate
         print(c)
-       let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
+        /*
+        //get Pin managed object for selected annotation
+        let pin = getPin(for: c!)
+        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
+        //store coordinate in view controller
+        viewController.coordinate = c!
+//        viewController.longitude = (c?.longitude)!
+//        viewController.latitude = (c?.latitude)!
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         //Create fetch request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
-        let pred = NSPredicate(format: "Pin.latitude = %@[0] AND Pin.longitude = %@[1]", argumentArray: [c?.latitude,c?.longitude])
+//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true), NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PhotoProperties.URL, ascending: true)]
+//        let pred = NSPredicate.subst
+        let pred = NSPredicate(format: "pin = %@" , argumentArray: [pin])
         fetchRequest.predicate = pred
 
         //Create FetchedResultsController
         viewController.fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
 
         navigationController?.present(viewController, animated: true, completion: nil)
-//        performSegue(withIdentifier: "showPhotos", sender: self)
+        */
+        performSegue(withIdentifier: "ShowPhotos", sender: c)
     }
     
     
@@ -160,8 +171,37 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //get Pin managed object for selected annotation
+        let pin = getPin(for: sender! as! CLLocationCoordinate2D)
+        let viewController = segue.destination as! PhotoViewController
+        //store coordinate in view controller
+        viewController.coordinate = sender! as! CLLocationCoordinate2D
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        //Create fetch request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+        //        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true), NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PhotoProperties.URL, ascending: true)]
+        //        let pred = NSPredicate.subst
+        let pred = NSPredicate(format: "pin = %@" , argumentArray: [pin])
+        fetchRequest.predicate = pred
         
+        //Create FetchedResultsController
+        viewController.fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
        
+    }
+    //MARK: Core Data 
+    func getPin(for coordinate: CLLocationCoordinate2D) -> Pin {
+        for pin in storedPins{
+            if pin.latitude == coordinate.latitude && pin.longitude == coordinate.longitude{
+                return pin
+            }
+        }
+        
+        print("Pin not found so using 1st Pin")
+        return storedPins[0]
+            
+        
     }
     
     deinit {

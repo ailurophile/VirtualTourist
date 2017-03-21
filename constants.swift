@@ -24,10 +24,11 @@ struct DefaultValues {
 }
 struct PinProperties {
     static let Lat = "latitude"
-    static let Lon = "longitude'"
+    static let Lon = "longitude"
     static let Photos = "photos"
 }
 struct PhotoProperties {
     static let URL = "image_url"
     static let Pin = "pin"
+    static let ReuseIdentifier = "PhotoCell"
 }
