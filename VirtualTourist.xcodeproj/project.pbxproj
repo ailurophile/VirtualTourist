@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D71CC7631E7CC78C001D7B75 /* constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71CC7621E7CC78C001D7B75 /* constants.swift */; };
 		D72E17011E808D9D001570D2 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72E17001E808D9D001570D2 /* PhotoCollectionViewCell.swift */; };
+		D75B75551E8333F400AD2794 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = D75B75541E8333F400AD2794 /* README.md */; };
 		D78F583E1E77011E00CC9956 /* notifyUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F583D1E77011E00CC9956 /* notifyUser.swift */; };
 		D78F58411E77503700CC9956 /* Photo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F583F1E77503700CC9956 /* Photo+CoreDataProperties.swift */; };
 		D78F58421E77503700CC9956 /* Pin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F58401E77503700CC9956 /* Pin+CoreDataProperties.swift */; };
@@ -29,6 +30,7 @@
 /* Begin PBXFileReference section */
 		D71CC7621E7CC78C001D7B75 /* constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = constants.swift; sourceTree = "<group>"; };
 		D72E17001E808D9D001570D2 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
+		D75B75541E8333F400AD2794 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D78F583D1E77011E00CC9956 /* notifyUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notifyUser.swift; sourceTree = "<group>"; };
 		D78F583F1E77503700CC9956 /* Photo+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Photo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D78F58401E77503700CC9956 /* Pin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Pin+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				D7ACF53F1E7332C800A6033C /* Main.storyboard */,
+				D75B75541E8333F400AD2794 /* README.md */,
 				D7ACF5451E7332C800A6033C /* Assets.xcassets */,
 				D7ACF5471E7332C800A6033C /* LaunchScreen.storyboard */,
 			);
@@ -247,6 +250,7 @@
 				D7ACF5841E74DBBB00A6033C /* Pin+CoreDataClass.swift in Sources */,
 				D7ACF5871E76198B00A6033C /* PhotoViewController.swift in Sources */,
 				D78F584B1E7755B000CC9956 /* FlickrClient.swift in Sources */,
+				D75B75551E8333F400AD2794 /* README.md in Sources */,
 				D78F58411E77503700CC9956 /* Photo+CoreDataProperties.swift in Sources */,
 				D7ACF5441E7332C800A6033C /* VirtualTourist.xcdatamodeld in Sources */,
 				D71CC7631E7CC78C001D7B75 /* constants.swift in Sources */,
