@@ -19,6 +19,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
     let reuseIdentifier = PhotoProperties.ReuseIdentifier
     var editingAlbum = false
+    var flickrClient = FlickrClient()
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
         didSet {
             // Whenever the frc changes, we execute the search and
@@ -35,6 +36,16 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)
+        
+        //get pictures from Flickr
+        flickrClient.getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
+            guard error == nil else{
+                notifyUser(self, message: (error!.localizedDescription))
+                return
+            }
+            print(photos)
+
+            })
         
     }
     @IBAction func albumButtonSelected(_ sender: Any) {

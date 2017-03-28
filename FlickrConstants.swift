@@ -1,8 +1,8 @@
 //
-//  FlickrClientConstants.swift
+//  FlickrConstants.swift
 //  VirtualTourist
 //
-//  Created by Lisa Litchfield on 3/13/17.
+//  Created by Lisa Litchfield on 3/27/17.
 //  Copyright © 2017 Lisa Litchfield. All rights reserved.
 //
 
@@ -45,7 +45,7 @@ extension FlickrClient{
         static let Photo = "photo"
         static let PhotosOnly = 1
         static let PhotosPerAlbum = 21
-
+        
     }
     
 }

@@ -109,29 +109,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         print("User selected pin ")
         let c = view.annotation?.coordinate
         print(c)
-        /*
-        //get Pin managed object for selected annotation
-        let pin = getPin(for: c!)
-        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
-        //store coordinate in view controller
-        viewController.coordinate = c!
-//        viewController.longitude = (c?.longitude)!
-//        viewController.latitude = (c?.latitude)!
-        //Get the persistent container
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        //Create fetch request
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
-//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true), NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PhotoProperties.URL, ascending: true)]
-//        let pred = NSPredicate.subst
-        let pred = NSPredicate(format: "pin = %@" , argumentArray: [pin])
-        fetchRequest.predicate = pred
 
-        //Create FetchedResultsController
-        viewController.fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: delegate.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-
-        navigationController?.present(viewController, animated: true, completion: nil)
-        */
         performSegue(withIdentifier: "ShowPhotos", sender: c)
     }
     
