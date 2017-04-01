@@ -29,6 +29,11 @@ struct PinProperties {
 }
 struct PhotoProperties {
     static let URL = "image_url"
+    static let Image = "image"
     static let Pin = "pin"
     static let ReuseIdentifier = "PhotoCell"
+}
+struct Constants {
+    static let PhotosPerAlbum = 21
+
 }

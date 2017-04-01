@@ -17,16 +17,16 @@ class FlickrClient: NSObject{
                           FlickrClient.ParameterKeys.Latitude: latitude,
                           FlickrClient.ParameterKeys.Longitude: longitude,
                           FlickrClient.ParameterKeys.ContentType: FlickrClient.ParameterValues.PhotosOnly,
-                          FlickrClient.ParameterKeys.Extras: FlickrClient.ParameterValues.MediumURL,
+                          FlickrClient.ParameterKeys.Extras: FlickrClient.ParameterValues.SquarePicURL,
                           FlickrClient.ParameterKeys.Format: FlickrClient.ParameterValues.Format,
-                          FlickrClient.ParameterKeys.PerPage: FlickrClient.ParameterValues.PhotosPerAlbum] as [String : Any]
+                          FlickrClient.ParameterKeys.PerPage: FlickrClient.ParameterValues.PhotosPerPage] as [String : Any]
         queryFlickr( parameters as [String : AnyObject], completionHandlerForQuery: {(results,error) in
             guard error == nil else{
                 let userInfo = [NSLocalizedDescriptionKey : error?.localizedDescription]
                 completionHandler(nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
                 return
             }
-//            print(results)
+            print(results)
             guard let data = results as! [String:Any]? else {
                 let userInfo = [NSLocalizedDescriptionKey : "No photos returned"]
                 completionHandler(nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
@@ -43,7 +43,7 @@ class FlickrClient: NSObject{
             print("PhotoArray count = \(photoArray.count)")
             var photoURLS = [String]()
             for pic in photoArray{
-                photoURLS.append(pic[FlickrClient.ParameterValues.MediumURL] as! String)
+                photoURLS.append(pic[FlickrClient.ParameterValues.SquarePicURL] as! String)
             }
             // Return array of photo URLs
             completionHandler(photoURLS,nil)

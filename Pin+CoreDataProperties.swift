@@ -2,7 +2,7 @@
 //  Pin+CoreDataProperties.swift
 //  VirtualTourist
 //
-//  Created by Lisa Litchfield on 3/11/17.
+//  Created by Lisa Litchfield on 3/30/17.
 //  Copyright © 2017 Lisa Litchfield. All rights reserved.
 //
 

@@ -15,6 +15,7 @@ extension FlickrClient{
         static let ApiHost = "www.flickr.com"
         static let SessionPath = "/services/rest"
         static let HTTPMethod = "GET"
+        
     }
     //MARK: Parameter Keys
     struct ParameterKeys {
@@ -38,13 +39,15 @@ extension FlickrClient{
         static let ExtendedRadius = 10    // default is 5Km
         static let FindPhotos = "flickr.photos.search"
         static let Format = "json"
-        static let MediumURL = "url_m"
+        static let SmallPicURL = "url_m"
+        static let SquarePicURL = "url_s"
         static let Status = "stat"
         static let Title = "title"
         static let Photos = "photos"
         static let Photo = "photo"
         static let PhotosOnly = 1
-        static let PhotosPerAlbum = 21
+        static let PhotosPerPage = 5
+
         
     }
     

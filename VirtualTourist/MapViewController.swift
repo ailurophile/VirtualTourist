@@ -52,7 +52,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true),NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
         do {
             let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
-            print("results = \(results)")
+//            print("results = \(results)")
             for pin in results{
                 print("pin at coordinates: \(pin.latitude),\(pin.longitude)")
             }
@@ -154,12 +154,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let viewController = segue.destination as! PhotoViewController
         //store coordinate in view controller
         viewController.coordinate = sender! as! CLLocationCoordinate2D
+        viewController.pin = pin
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         //Create fetch request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
         //        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true), NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PhotoProperties.URL, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PhotoProperties.Image, ascending: true)]
         //        let pred = NSPredicate.subst
         let pred = NSPredicate(format: "pin = %@" , argumentArray: [pin])
         fetchRequest.predicate = pred
