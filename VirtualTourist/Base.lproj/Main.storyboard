@@ -130,6 +130,7 @@
                     <connections>
                         <outlet property="albumButton" destination="cXJ-aJ-EtY" id="q7a-1w-utz"/>
                         <outlet property="collectionView" destination="mwG-D4-wTh" id="d10-3S-Yff"/>
+                        <outlet property="flowLayout" destination="1aF-ht-uH2" id="qk4-rF-DJb"/>
                         <outlet property="mapView" destination="Q5v-dn-bs2" id="uyr-S5-h0N"/>
                     </connections>
                 </viewController>

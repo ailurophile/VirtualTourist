@@ -15,8 +15,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     @IBOutlet weak var albumButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
-//    var latitude = DefaultValues.Lat
-//    var longitude = DefaultValues.Lon
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
     var pin: Pin! = nil
     let reuseIdentifier = PhotoProperties.ReuseIdentifier
@@ -43,9 +42,13 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)
-        //get pictures from memory if any
+        collectionView.delegate = self
         
-        //get pictures from Flickr
+        //check if any pictures in memory for this pin
+        // if not, get pictures from Flickr
+        executeSearch()
+        print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
+        if fetchedResultsController?.fetchedObjects?.count == 0 {
         FlickrClient.sharedInstance().getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
             guard error == nil else{
                 notifyUser(self, message: (error!.localizedDescription))
@@ -53,17 +56,29 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             }
             self.photoURLS = photos
             print(photos)
-/*            while (self.currentIndex < (photos?.count)! ){
-                let pic = photos?[self.currentIndex]
-                self.currentIndex+=1
-                print(pic!)
-            }*/
+
             //download images and create Photo objects 
-            self.getImages()
+            DispatchQueue.global().async {
+                self.getImages()
+            }
+//            self.getImages()
+            
+            
 
             })
+        }
+        else{
+            albumButton.isEnabled = true
+        }
         
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // set up flow layout
+        configureFlowLayout(view.frame.size)
+        
+    }
+
     //This method deletes all photos for the current pin
     func clearAlbum(){
         
@@ -74,7 +89,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        for i in 1...Constants.PhotosPerAlbum{
+        for i in 0..<photoURLS.count{
             let url = URL(string: photoURLS[currentIndex+i])
             do{
             let imageData = try Data(contentsOf: url!)
@@ -83,18 +98,26 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 let newPhoto = Photo(entity:Photo.entity(), insertInto: context)
                 newPhoto.image = imageData as NSData?
                 newPhoto.pin = pin
+                //store new Photo in Core Data
+/*                DispatchQueue.main.async {
+                    //store new Photo Objects
+                    delegate.saveContext()
+                    self.albumButton.isEnabled = true
+                    
+                }*/
             } catch let error as NSError {
                     print("Could not get image. \(error), \(error.userInfo)")
                 break
             }
             //store new Photo objects
 //            delegate.saveContext()
-            /*
+            
             DispatchQueue.main.async {
            //store new Photo Objects
                 delegate.saveContext()
+                self.albumButton.isEnabled = true
             
-            } */
+            }
                 
             
             
@@ -130,6 +153,13 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     }
     
     //MARK: Collection View Delegate
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        if let fc = fetchedResultsController {
+            return fc.sections!.count
+        } else {
+            return 0
+        }
+    }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if let fc = fetchedResultsController {
             return fc.sections![section].numberOfObjects
@@ -146,11 +176,31 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // Find the right Photo for this indexpath
+        let photo = fetchedResultsController!.object(at: indexPath) as! Photo
+        let photoImage = UIImage(data: photo.image as! Data)
+        
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCollectionViewCell
         //configure cell
+        cell.imageView.image = photoImage
         
         return cell
     }
+    func configureFlowLayout( _ size: CGSize){
+        let space: CGFloat = 3.0
+        let width = size.width
+        let height = size.height
+        var dimension = (width - (2*space))/3.0
+        if width > height {
+            dimension = (width - (5 * space))/6.0
+        }
+        
+        flowLayout?.minimumLineSpacing = space
+        flowLayout?.minimumInteritemSpacing = space
+        flowLayout?.itemSize = CGSize(width: dimension,height: dimension)
+    }
+
 }
 
 //MARK: Core Data suppport
