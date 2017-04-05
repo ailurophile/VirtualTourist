@@ -109,6 +109,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         print("User selected pin ")
         let c = view.annotation?.coordinate
         print(c)
+        mapView.deselectAnnotation(view.annotation, animated: false)
 
         performSegue(withIdentifier: "ShowPhotos", sender: c)
     }

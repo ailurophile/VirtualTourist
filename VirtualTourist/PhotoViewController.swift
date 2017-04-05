@@ -15,6 +15,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     @IBOutlet weak var albumButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
     var pin: Pin! = nil
@@ -32,6 +33,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             // reload the table
             fetchedResultsController?.delegate = self
             executeSearch()
+
         }
     }
     override func viewDidLoad() {
@@ -49,7 +51,8 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         executeSearch()
         print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
         if fetchedResultsController?.fetchedObjects?.count == 0 {
-        FlickrClient.sharedInstance().getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
+            activityIndicator.startAnimating()
+            FlickrClient.sharedInstance().getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
             guard error == nil else{
                 notifyUser(self, message: (error!.localizedDescription))
                 return
@@ -86,6 +89,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     //This method download the image stored at the url retrieved earlier from Flickr 
     // and creates  and stores Photo objects
     func getImages(){
+        activityIndicator.startAnimating()
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
@@ -99,12 +103,12 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 newPhoto.image = imageData as NSData?
                 newPhoto.pin = pin
                 //store new Photo in Core Data
-/*                DispatchQueue.main.async {
+                DispatchQueue.main.async {
                     //store new Photo Objects
                     delegate.saveContext()
-                    self.albumButton.isEnabled = true
+//                    self.albumButton.isEnabled = true
                     
-                }*/
+                }
             } catch let error as NSError {
                     print("Could not get image. \(error), \(error.userInfo)")
                 break
@@ -113,9 +117,12 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
 //            delegate.saveContext()
             
             DispatchQueue.main.async {
-           //store new Photo Objects
-                delegate.saveContext()
+           //update user interface
+//                delegate.saveContext()
+                self.activityIndicator.stopAnimating()
                 self.albumButton.isEnabled = true
+                self.executeSearch()
+                self.collectionView.reloadData()
             
             }
                 
