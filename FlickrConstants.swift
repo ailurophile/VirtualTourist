@@ -46,7 +46,7 @@ extension FlickrClient{
         static let Photos = "photos"
         static let Photo = "photo"
         static let PhotosOnly = 1
-        static let PhotosPerPage = 5
+        static let PhotosPerPage = 15
 
         
     }

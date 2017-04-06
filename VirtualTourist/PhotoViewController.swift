@@ -23,7 +23,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     var editingAlbum = false
     var photoURLS: [String]!
     var storedPhotosToBeDeleted = [Photo]()
-    var currentPage = 0
+    var currentPage = 1
     let numberOfPages: Int? = nil
     var currentIndex = 0  //used to keep track of last used image URL in array for downloading images
 //    var flickrClient = FlickrClient()
@@ -52,7 +52,8 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         executeSearch()
         print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
         if fetchedResultsController?.fetchedObjects?.count == 0 {
-            activityIndicator.startAnimating()
+            getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: nil, radius: nil)
+/*            activityIndicator.startAnimating()
             FlickrClient.sharedInstance().getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
             guard error == nil else{
                 notifyUser(self, message: (error!.localizedDescription))
@@ -70,6 +71,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             
 
             })
+ */
         }
         else{
             albumButton.isEnabled = true
@@ -85,16 +87,29 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
 
     //This method deletes all photos for the current pin
     func clearAlbum(){
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+        if let pics = fetchedResultsController?.fetchedObjects{
+            for pic in pics {
+                context.delete(pic as! NSManagedObject)
+            }
+            delegate.saveContext()
+            print("all photos deleted")
+            executeSearch()
+            collectionView.reloadData()
+        }
         
     }
-    //This method download the image stored at the url retrieved earlier from Flickr 
+    //This method downloads the image stored at the url retrieved earlier from Flickr
     // and creates  and stores Photo objects
     func getImages(){
         activityIndicator.startAnimating()
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        for i in 0..<photoURLS.count{
+        let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count)
+        for i in 0..<albumSize{
             let url = URL(string: photoURLS[currentIndex+i])
             do{
             let imageData = try Data(contentsOf: url!)
@@ -126,16 +141,37 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 self.collectionView.reloadData()
             
             }
-                
             
-            
-            
-
-            
-            
+           
         }
-        currentIndex += Constants.PhotosPerAlbum
+        currentIndex += albumSize
     }
+    
+    //This method uses the FlickClient to obtain new photo URLs
+    func getNewURLs(latitude: Double, longitude: Double, page: Int?, radius: Int?){
+        activityIndicator.startAnimating()
+        FlickrClient.sharedInstance().getPhotos(latitude: latitude , longitude: longitude, page: page, radius:radius, completionHandler: {(photos, error) in
+            guard error == nil else{
+                notifyUser(self, message: (error!.localizedDescription))
+                return
+            }
+            guard let pics = photos else{
+                notifyUser(self, message: "No photos returned")
+                //TBD add label showing pin has no images
+                return
+            }
+            self.photoURLS = pics
+            print(pics)
+            
+            //download images and create Photo objects
+            DispatchQueue.global().async {
+                self.getImages()
+            }
+        })
+
+    }
+    //If user was editing an album, this method deletes the selected photos 
+    //otherwise it deletes all photos from the album and downloads a new batch from Flickr
     @IBAction func albumButtonSelected(_ sender: Any) {
         if(editingAlbum){
             //Get the persistent container
@@ -157,7 +193,16 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             clearAlbum()
             
             //Check if unused urls from previous download
-            if photoURLS.count - 1 - currentIndex < Constants.PhotosPerAlbum {
+            if  currentIndex  >= photoURLS.count   {
+                currentPage += 1
+                if currentPage >= numberOfPages! {
+                   //TBD inform user no more pictures
+                    print("no more pictures")
+        
+                }
+                else {
+                    getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: currentPage, radius: nil)
+                }
             
             //TBDdownload new photos from FLickr
             }

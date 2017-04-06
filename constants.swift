@@ -34,7 +34,7 @@ struct PhotoProperties {
     static let ReuseIdentifier = "PhotoCell"
 }
 struct Constants {
-    static let PhotosPerAlbum = 21
+    static let PhotosPerAlbum = 5 
 
 }
 struct ButtonText{
