@@ -22,7 +22,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     let reuseIdentifier = PhotoProperties.ReuseIdentifier
     var editingAlbum = false
     var photoURLS: [String]!
-//    var storedPhotos: [Photo]!
+    var storedPhotosToBeDeleted = [Photo]()
     var currentPage = 0
     let numberOfPages: Int? = nil
     var currentIndex = 0  //used to keep track of last used image URL in array for downloading images
@@ -45,6 +45,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)
         collectionView.delegate = self
+        collectionView.allowsMultipleSelection = true
         
         //check if any pictures in memory for this pin
         // if not, get pictures from Flickr
@@ -137,7 +138,18 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     }
     @IBAction func albumButtonSelected(_ sender: Any) {
         if(editingAlbum){
-            //TBDdelete selected photos
+            //Get the persistent container
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            let context = delegate.persistentContainer.viewContext
+            //delete selected photos
+            for pic in storedPhotosToBeDeleted{
+                context.delete(pic)
+            }
+            delegate.saveContext()
+            print("\(storedPhotosToBeDeleted.count) photos deleted")
+            executeSearch()
+            collectionView.reloadData()
+            albumButton.setTitle(ButtonText.NotEditing, for: .normal)
             return
         }
         else {
@@ -178,8 +190,25 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         if (!editingAlbum){
             
             editingAlbum = true
-            //TBD change button
+            //change button text
+            albumButton.setTitle(ButtonText.Editing, for: .normal)
         }
+        let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
+        storedPhotosToBeDeleted.append(selectedPhoto)
+
+        let cell = collectionView.cellForItem(at: indexPath)
+        cell?.alpha = 0.5
+
+        
+    }
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
+        if storedPhotosToBeDeleted.contains(selectedPhoto){
+            let index = storedPhotosToBeDeleted.index(of: selectedPhoto)
+            storedPhotosToBeDeleted.remove(at: index!)
+        }
+        let cell = collectionView.cellForItem(at: indexPath)
+        cell?.alpha = 1.0
         
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -191,6 +220,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCollectionViewCell
         //configure cell
         cell.imageView.image = photoImage
+        cell.alpha = 1.0
         
         return cell
     }

@@ -37,3 +37,7 @@ struct Constants {
     static let PhotosPerAlbum = 21
 
 }
+struct ButtonText{
+    static let Editing = "Delete Selected Photos"
+    static let NotEditing = "New Collection"
+}
