@@ -11,7 +11,7 @@ import Foundation
 
 class FlickrClient: NSObject{
     
-    func getPhotos(latitude: Double, longitude: Double, page: Int?, radius: Int?, completionHandler: @escaping (_ results: [String]?, _ error: NSError?)->()){
+    func getPhotos(latitude: Double, longitude: Double, page: Int?, radius: Int?, completionHandler: @escaping (_ pages: Int, _ results: [String]?, _ error: NSError?)->()){
         //build query parameters
         var parameters = [FlickrClient.ParameterKeys.Method: FlickrClient.ParameterValues.FindPhotos,
                           FlickrClient.ParameterKeys.Latitude: latitude,
@@ -20,33 +20,43 @@ class FlickrClient: NSObject{
                           FlickrClient.ParameterKeys.Extras: FlickrClient.ParameterValues.SquarePicURL,
                           FlickrClient.ParameterKeys.Format: FlickrClient.ParameterValues.Format,
                           FlickrClient.ParameterKeys.PerPage: FlickrClient.ParameterValues.PhotosPerPage] as [String : Any]
+        //check if a specific page is desired
+        if let page = page{
+            parameters[FlickrClient.ParameterKeys.Page] = page
+        }
         queryFlickr( parameters as [String : AnyObject], completionHandlerForQuery: {(results,error) in
             guard error == nil else{
                 let userInfo = [NSLocalizedDescriptionKey : error?.localizedDescription]
-                completionHandler(nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
+                completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
                 return
             }
             print(results)
             guard let data = results as! [String:Any]? else {
                 let userInfo = [NSLocalizedDescriptionKey : "No photos returned"]
-                completionHandler(nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
+                completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
                 return
             }
 
             // verify photos and photo keys in results
-            guard let photosDictionary = data[FlickrClient.ParameterValues.Photos] as? [String:AnyObject], let photoArray = photosDictionary[FlickrClient.ParameterValues.Photo] as? [[String:AnyObject]] else {
+            guard let photosDictionary = data[FlickrClient.ParameterValues.Photos] as? [String:AnyObject],  let photoArray = photosDictionary[FlickrClient.ParameterValues.Photo] as? [[String:AnyObject]] else {
                 let userInfo = [NSLocalizedDescriptionKey : "Cannot find keys '\(FlickrClient.ParameterValues.Photos)' and '\(FlickrClient.ParameterValues.Photo)' in \(data)"]
-                completionHandler(nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
+                completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
                 
                 return
             }
+            
             print("PhotoArray count = \(photoArray.count)")
             var photoURLS = [String]()
             for pic in photoArray{
                 photoURLS.append(pic[FlickrClient.ParameterValues.SquarePicURL] as! String)
             }
-            // Return array of photo URLs
-            completionHandler(photoURLS,nil)
+            if let pages = photosDictionary[FlickrClient.ParameterKeys.Pages] as? Int {
+            // Return array of photo URLs and page count
+                completionHandler(pages,photoURLS,nil)
+            }
+            else{
+              completionHandler(0,photoURLS,nil)
+            }
             return
 
         })

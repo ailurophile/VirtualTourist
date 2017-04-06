@@ -27,6 +27,7 @@ extension FlickrClient{
         static let Method = "method"
         static let NoJSONCallback = "nojsoncallback"
         static let Page = "page"
+        static let Pages = "pages"
         static let PerPage = "per_page"
         static let Radius = "radius"
         static let ContentType = "content_type"
@@ -46,7 +47,7 @@ extension FlickrClient{
         static let Photos = "photos"
         static let Photo = "photo"
         static let PhotosOnly = 1
-        static let PhotosPerPage = 15
+        static let PhotosPerPage = 90
 
         
     }

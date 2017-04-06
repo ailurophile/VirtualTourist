@@ -17,14 +17,15 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
+    @IBOutlet weak var label: UILabel!
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
     var pin: Pin! = nil
     let reuseIdentifier = PhotoProperties.ReuseIdentifier
     var editingAlbum = false
-    var photoURLS: [String]!
+    var photoURLS: [String] = []
     var storedPhotosToBeDeleted = [Photo]()
     var currentPage = 1
-    let numberOfPages: Int? = nil
+    var numberOfPages = 0
     var currentIndex = 0  //used to keep track of last used image URL in array for downloading images
 //    var flickrClient = FlickrClient()
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
@@ -46,6 +47,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         mapView.addAnnotation(annotation)
         collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
+        label.text = ""
         
         //check if any pictures in memory for this pin
         // if not, get pictures from Flickr
@@ -53,25 +55,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
         if fetchedResultsController?.fetchedObjects?.count == 0 {
             getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: nil, radius: nil)
-/*            activityIndicator.startAnimating()
-            FlickrClient.sharedInstance().getPhotos(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as Double, page: nil, radius: nil, completionHandler: {(photos, error) in
-            guard error == nil else{
-                notifyUser(self, message: (error!.localizedDescription))
-                return
-            }
-            self.photoURLS = photos
-            print(photos)
 
-            //download images and create Photo objects 
-            DispatchQueue.global().async {
-                self.getImages()
-            }
-//            self.getImages()
-            
-            
-
-            })
- */
         }
         else{
             albumButton.isEnabled = true
@@ -108,7 +92,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
-        let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count)
+        let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count-currentIndex)
         for i in 0..<albumSize{
             let url = URL(string: photoURLS[currentIndex+i])
             do{
@@ -150,7 +134,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     //This method uses the FlickClient to obtain new photo URLs
     func getNewURLs(latitude: Double, longitude: Double, page: Int?, radius: Int?){
         activityIndicator.startAnimating()
-        FlickrClient.sharedInstance().getPhotos(latitude: latitude , longitude: longitude, page: page, radius:radius, completionHandler: {(photos, error) in
+        FlickrClient.sharedInstance().getPhotos(latitude: latitude , longitude: longitude, page: page, radius:radius, completionHandler: {(pages,photos, error) in
             guard error == nil else{
                 notifyUser(self, message: (error!.localizedDescription))
                 return
@@ -158,8 +142,12 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             guard let pics = photos else{
                 notifyUser(self, message: "No photos returned")
                 //TBD add label showing pin has no images
+                
                 return
             }
+            
+            self.numberOfPages = pages
+            
             self.photoURLS = pics
             print(pics)
             
@@ -186,6 +174,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             executeSearch()
             collectionView.reloadData()
             albumButton.setTitle(ButtonText.NotEditing, for: .normal)
+            editingAlbum = false
             return
         }
         else {
@@ -195,12 +184,16 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             //Check if unused urls from previous download
             if  currentIndex  >= photoURLS.count   {
                 currentPage += 1
-                if currentPage >= numberOfPages! {
-                   //TBD inform user no more pictures
+//                if (currentPage > numberOfPages) && (photoURLS.count != 0) {
+                if (currentPage > numberOfPages) {
+                    
+                   // inform user no more pictures
                     print("no more pictures")
+                    self.label.text = "No images for pin"
         
                 }
                 else {
+                    currentIndex = 0
                     getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: currentPage, radius: nil)
                 }
             
@@ -254,6 +247,10 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         }
         let cell = collectionView.cellForItem(at: indexPath)
         cell?.alpha = 1.0
+        if storedPhotosToBeDeleted.count == 0{
+            editingAlbum = false
+            albumButton.setTitle(ButtonText.NotEditing, for: .normal)
+        }
         
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -284,6 +281,17 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     }
 
 }
+
+//MARK: mapView delegate
+/*
+func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
+    let controller = UIAlertController(title: "Alert", message: "Do you wish to delete this pin and it's associated photos?", preferredStyle: .alert)
+    let deleteAction = UIAlertAction(title: "DELETE", style: .destructive) { action in
+        mapView.ViewCo
+        clearAlbum()
+    }
+}
+ */
 
 //MARK: Core Data suppport
 extension PhotoViewController: NSFetchedResultsControllerDelegate{

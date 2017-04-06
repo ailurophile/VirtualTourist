@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Vxl-3e-8GZ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Vxl-3e-8GZ">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -65,7 +65,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <activityIndicatorView key="backgroundView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="xGe-XS-Xf2">
-                                    <rect key="frame" x="142" y="166" width="37" height="37"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="369"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                     <color key="color" red="0.89373715279999999" green="0.38131491760000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </activityIndicatorView>
@@ -100,6 +100,12 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jEM-IC-Hhv">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                             </navigationBar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WiL-I8-yVa">
+                                <rect key="frame" x="160" y="283.5" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXJ-aJ-EtY">
                                 <rect key="frame" x="0.0" y="538" width="320" height="30"/>
                                 <state key="normal" title="New Collection"/>
@@ -116,11 +122,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="WiL-I8-yVa" firstAttribute="centerY" secondItem="DJx-ui-NhT" secondAttribute="centerY" id="00q-tL-5Wu"/>
                             <constraint firstItem="50q-3a-izc" firstAttribute="top" secondItem="cXJ-aJ-EtY" secondAttribute="bottom" id="429-4Z-jMO"/>
                             <constraint firstAttribute="trailing" secondItem="jEM-IC-Hhv" secondAttribute="trailing" id="4BJ-NR-mvs"/>
                             <constraint firstAttribute="trailing" secondItem="mwG-D4-wTh" secondAttribute="trailing" id="DCq-9d-Odm"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="top" secondItem="jEM-IC-Hhv" secondAttribute="bottom" id="JHA-tQ-FQh"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="Mzy-YF-db1"/>
+                            <constraint firstItem="WiL-I8-yVa" firstAttribute="centerX" secondItem="DJx-ui-NhT" secondAttribute="centerX" id="S7H-eq-7fE"/>
                             <constraint firstItem="cXJ-aJ-EtY" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="WF3-rQ-npO"/>
                             <constraint firstItem="jEM-IC-Hhv" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="WGU-3W-VKu"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="top" secondItem="jEM-IC-Hhv" secondAttribute="bottom" id="fmq-fY-M8y"/>
@@ -137,6 +145,7 @@
                         <outlet property="albumButton" destination="cXJ-aJ-EtY" id="q7a-1w-utz"/>
                         <outlet property="collectionView" destination="mwG-D4-wTh" id="d10-3S-Yff"/>
                         <outlet property="flowLayout" destination="1aF-ht-uH2" id="qk4-rF-DJb"/>
+                        <outlet property="label" destination="WiL-I8-yVa" id="4hd-qm-jrs"/>
                         <outlet property="mapView" destination="Q5v-dn-bs2" id="uyr-S5-h0N"/>
                     </connections>
                 </viewController>
