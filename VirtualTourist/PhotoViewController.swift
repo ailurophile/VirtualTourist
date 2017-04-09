@@ -39,6 +39,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate = self
         editingAlbum = false
         albumButton.isEnabled = false
         mapView.centerCoordinate = coordinate
@@ -279,19 +280,45 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         flowLayout?.minimumInteritemSpacing = space
         flowLayout?.itemSize = CGSize(width: dimension,height: dimension)
     }
+    
+    
+    
+    
+    
+    //MARK: mapView delegate
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
+     
+     
+     
+     let controller = UIAlertController(title: "Alert", message: "Do you wish to delete this pin and it's associated photos?", preferredStyle: .alert)
+     let deleteAction = UIAlertAction(title: "DELETE", style: .destructive) { action in
+
+     
+        self.clearAlbum()
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+        context.delete(self.pin)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: Constants.ModelUpdatedNotificationKey), object: self)
+        self.navigationController?.popViewController(animated: false)
+
+    
+     
+     }
+     let cancelAction = UIAlertAction(title: "CANCEL", style: .cancel, handler: {action in self.dismiss(animated: false)})
+     controller.addAction(deleteAction)
+     controller.addAction(cancelAction)
+     self.present(controller, animated: true, completion: nil)
+     
+     }
 
 }
 
-//MARK: mapView delegate
-/*
-func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
-    let controller = UIAlertController(title: "Alert", message: "Do you wish to delete this pin and it's associated photos?", preferredStyle: .alert)
-    let deleteAction = UIAlertAction(title: "DELETE", style: .destructive) { action in
-        mapView.ViewCo
-        clearAlbum()
-    }
-}
- */
+
+
+
+
 
 //MARK: Core Data suppport
 extension PhotoViewController: NSFetchedResultsControllerDelegate{

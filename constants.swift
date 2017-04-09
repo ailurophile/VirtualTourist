@@ -35,6 +35,7 @@ struct PhotoProperties {
 }
 struct Constants {
     static let PhotosPerAlbum = 18
+    static let ModelUpdatedNotificationKey = "LisaLitchfield.PinModelUpdatedNotificationKey"
 
 }
 struct ButtonText{

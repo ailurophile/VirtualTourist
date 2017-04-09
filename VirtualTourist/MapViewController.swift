@@ -45,22 +45,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.centerCoordinate = CLLocationCoordinate2DMake(mapSettings[Keys.LatKey]!, mapSettings[Keys.LonKey]!)
         let span = MKCoordinateSpan(latitudeDelta: mapSettings[Keys.LatDeltasKey]!, longitudeDelta: mapSettings[Keys.LonDeltaKey]!)
         mapView.region.span = span
-        //Get the persistent container
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        //Create fetch request
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true),NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
-        do {
-            let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
-//            print("results = \(results)")
-            for pin in results{
-                print("pin at coordinates: \(pin.latitude),\(pin.longitude)")
-            }
-            storedPins = results
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
-        addAnnotationsToMap()
+        //register for notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(loadPins), name: NSNotification.Name(rawValue: Constants.ModelUpdatedNotificationKey), object: nil)
+        loadPins()
         
     }
     // MARK: - MKMapViewDelegate
@@ -108,7 +95,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
         print("User selected pin ")
         let c = view.annotation?.coordinate
-        print(c)
+//        print(c)
         mapView.deselectAnnotation(view.annotation, animated: false)
 
         performSegue(withIdentifier: "ShowPhotos", sender: c)
@@ -127,13 +114,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     private func addAnnotationsToMap(){
         
-//        annotations.removeAll()
+        annotations.removeAll()
+        mapView.removeAnnotations(mapView.annotations)
         for pin in storedPins{
             let annotation = MapViewController.getAnnotation(pin: pin)
             annotations.append(annotation)
             
         }
-        self.mapView.addAnnotations(annotations)
+        mapView.addAnnotations(annotations)
     }
     
     class func getAnnotation(pin: Pin)-> MKPointAnnotation{
@@ -181,6 +169,27 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         print("Pin not found so using 1st Pin")
         return storedPins[0]
             
+        
+    }
+    
+    @objc private func loadPins(){
+        //Get the persistent container
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        //Create fetch request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true),NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
+        do {
+            let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
+            //            print("results = \(results)")
+            for pin in results{
+                print("pin at coordinates: \(pin.latitude),\(pin.longitude)")
+            }
+            storedPins = results
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        addAnnotationsToMap()
+
         
     }
     
