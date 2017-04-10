@@ -15,7 +15,6 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     @IBOutlet weak var albumButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var label: UILabel!
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
@@ -27,7 +26,8 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     var currentPage = 1
     var numberOfPages = 0
     var currentIndex = 0  //used to keep track of last used image URL in array for downloading images
-//    var flickrClient = FlickrClient()
+    var newAlbumURLs = [String]()
+    var photoImage = #imageLiteral(resourceName: "turtle.jpg")
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
         didSet {
             // Whenever the frc changes, we execute the search and
@@ -54,11 +54,12 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         // if not, get pictures from Flickr
         executeSearch()
         print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
-        if fetchedResultsController?.fetchedObjects?.count == 0 {
-            getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: nil, radius: nil)
+        if fetchedResultsController?.fetchedObjects?.count == 0 || photoURLS.count == 0{
+            
+            getNewURLs(latitude: coordinate.latitude , longitude: coordinate.longitude , page: nil, radius: nil, createNewAlbum: fetchedResultsController?.fetchedObjects?.count == 0)
 
         }
-        else{
+        if fetchedResultsController?.fetchedObjects?.count != 0 {
             albumButton.isEnabled = true
         }
         
@@ -86,55 +87,36 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         }
         
     }
-    //This method downloads the image stored at the url retrieved earlier from Flickr
-    // and creates  and stores Photo objects
-    func getImages(){
-        activityIndicator.startAnimating()
+    //This method creates and stores Photo objects for new album
+    func createNewAlbum(){
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
         let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count-currentIndex)
+        
         for i in 0..<albumSize{
-            let url = URL(string: photoURLS[currentIndex+i])
-            do{
-            let imageData = try Data(contentsOf: url!)
-                
-                //create Photo object and set realtionship to pin
-                let newPhoto = Photo(entity:Photo.entity(), insertInto: context)
-                newPhoto.image = imageData as NSData?
-                newPhoto.pin = pin
-                //store new Photo in Core Data
-                DispatchQueue.main.async {
-                    //store new Photo Objects
-                    delegate.saveContext()
-//                    self.albumButton.isEnabled = true
-                    
-                }
-            } catch let error as NSError {
-                    print("Could not get image. \(error), \(error.userInfo)")
-                break
-            }
-            //store new Photo objects
-//            delegate.saveContext()
+            newAlbumURLs.append(photoURLS[currentIndex+i]) //copy image url to array for consumption by collectionView cell
+            //create Photo object and set realtionship to pin
+            let newPhoto = Photo(entity:Photo.entity(), insertInto: context)
+            newPhoto.pin = pin
             
+            }
+        
             DispatchQueue.main.async {
            //update user interface
 //                delegate.saveContext()
-                self.activityIndicator.stopAnimating()
                 self.albumButton.isEnabled = true
                 self.executeSearch()
                 self.collectionView.reloadData()
             
             }
             
-           
-        }
+
         currentIndex += albumSize
     }
     
-    //This method uses the FlickClient to obtain new photo URLs
-    func getNewURLs(latitude: Double, longitude: Double, page: Int?, radius: Int?){
-        activityIndicator.startAnimating()
+    //This method uses the FlickrClient to obtain new photo URLs
+    func getNewURLs(latitude: Double, longitude: Double, page: Int?, radius: Int?, createNewAlbum: Bool){
         FlickrClient.sharedInstance().getPhotos(latitude: latitude , longitude: longitude, page: page, radius:radius, completionHandler: {(pages,photos, error) in
             guard error == nil else{
                 notifyUser(self, message: (error!.localizedDescription))
@@ -142,8 +124,6 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             }
             guard let pics = photos else{
                 notifyUser(self, message: "No photos returned")
-                //TBD add label showing pin has no images
-                
                 return
             }
             
@@ -152,9 +132,11 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             self.photoURLS = pics
             print(pics)
             
-            //download images and create Photo objects
-            DispatchQueue.global().async {
-                self.getImages()
+            if(createNewAlbum){
+            //create Photo objects for new album
+                DispatchQueue.global().async {
+                    self.createNewAlbum()
+                }
             }
         })
 
@@ -179,6 +161,8 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             return
         }
         else {
+            //disable button
+            albumButton.isEnabled = false
             // delete all stored Photos
             clearAlbum()
             
@@ -195,14 +179,15 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 }
                 else {
                     currentIndex = 0
-                    getNewURLs(latitude: coordinate.latitude as Double, longitude: coordinate.longitude as! Double, page: currentPage, radius: nil)
+                    getNewURLs(latitude: coordinate.latitude, longitude: coordinate.longitude, page: currentPage, radius: nil, createNewAlbum: true)
                 }
             
             //TBDdownload new photos from FLickr
             }
             else{
             //use previously stored URLs
-                getImages()
+//                getImages()
+                createNewAlbum()
             }
             
             return
@@ -255,12 +240,46 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // Find the right Photo for this indexpath
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCollectionViewCell
+        // Find the right Photo for this indexpath & use it's image if one is present
         let photo = fetchedResultsController!.object(at: indexPath) as! Photo
-        let photoImage = UIImage(data: photo.image as! Data)
+        if let image = photo.image{
+            photoImage = UIImage(data: image as! Data)!
+        }
+        else{
+            photoImage = #imageLiteral(resourceName: "turtle.jpg")  //set placeholder image
+
+            //get next url
+            cell.activityIndicator.startAnimating()
+            let url = newAlbumURLs.popLast()
+            print("url to get image from: \(url)")
+            // download image from FLickr
+            FlickrClient.sharedInstance().getImage(urlString: url!, completionHandler: {(image,error) in
+                guard error == nil else{
+                    notifyUser(self, message: "Error downloading image")
+                    print(error)
+                    return
+                    
+                }
+                DispatchQueue.main.async {
+                    cell.imageView.image = UIImage(data: image as! Data)
+                    photo.image = image as? NSData
+                    print("is the image nil?\(photo.image == nil)")
+                    cell.activityIndicator.stopAnimating()
+                    //Get the persistent container
+                    let delegate = UIApplication.shared.delegate as! AppDelegate
+                    //store new Photo in Core Data
+                    
+                    delegate.saveContext()
+                    self.albumButton.isEnabled = true
+                
+                }
+                
+            })
+        }
         
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCollectionViewCell
+        
         //configure cell
         cell.imageView.image = photoImage
         cell.alpha = 1.0

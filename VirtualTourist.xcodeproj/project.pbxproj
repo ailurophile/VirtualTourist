@@ -15,6 +15,7 @@
 		D75B75571E8A214800AD2794 /* FlickrConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75B75561E8A214300AD2794 /* FlickrConstants.swift */; };
 		D78F583E1E77011E00CC9956 /* notifyUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F583D1E77011E00CC9956 /* notifyUser.swift */; };
 		D78F584B1E7755B000CC9956 /* FlickrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F584A1E7755B000CC9956 /* FlickrClient.swift */; };
+		D7A3A4F41E9B14D900DA39A7 /* turtle.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D7A3A4F31E9B14D800DA39A7 /* turtle.jpg */; };
 		D7ACF53C1E7332C800A6033C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ACF53B1E7332C800A6033C /* AppDelegate.swift */; };
 		D7ACF53E1E7332C800A6033C /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ACF53D1E7332C800A6033C /* MapViewController.swift */; };
 		D7ACF5411E7332C800A6033C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7ACF53F1E7332C800A6033C /* Main.storyboard */; };
@@ -36,6 +37,7 @@
 		D75B75561E8A214300AD2794 /* FlickrConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrConstants.swift; sourceTree = "<group>"; };
 		D78F583D1E77011E00CC9956 /* notifyUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notifyUser.swift; sourceTree = "<group>"; };
 		D78F584A1E7755B000CC9956 /* FlickrClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrClient.swift; sourceTree = "<group>"; };
+		D7A3A4F31E9B14D800DA39A7 /* turtle.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = turtle.jpg; sourceTree = "<group>"; };
 		D7ACF5381E7332C800A6033C /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7ACF53B1E7332C800A6033C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7ACF53D1E7332C800A6033C /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 			children = (
 				D7ACF53F1E7332C800A6033C /* Main.storyboard */,
 				D75B75541E8333F400AD2794 /* README.md */,
+				D7A3A4F31E9B14D800DA39A7 /* turtle.jpg */,
 				D7ACF5451E7332C800A6033C /* Assets.xcassets */,
 				D7ACF5471E7332C800A6033C /* LaunchScreen.storyboard */,
 			);
@@ -228,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7ACF5491E7332C800A6033C /* LaunchScreen.storyboard in Resources */,
+				D7A3A4F41E9B14D900DA39A7 /* turtle.jpg in Resources */,
 				D7ACF5461E7332C800A6033C /* Assets.xcassets in Resources */,
 				D7ACF5411E7332C800A6033C /* Main.storyboard in Resources */,
 				D75B75551E8333F400AD2794 /* README.md in Resources */,

@@ -64,6 +64,21 @@ class FlickrClient: NSObject{
         
     }
     
+    func getImage(urlString: String, completionHandler: @escaping (_ results:Any?,_ error:NSError?)->()){
+        DispatchQueue.global(qos: .userInitiated).async {
+
+            do{
+                let url = URL(string: urlString)
+                let imageData = try Data(contentsOf: url!)
+                completionHandler(imageData,nil)
+            }
+            catch let error as NSError {
+                completionHandler(nil,error)
+            }
+        }
+    
+    }
+    
     //MARK: Networking
     func queryFlickr(_ parameters: [String:AnyObject], completionHandlerForQuery: @escaping ( _ results: Any?, _ error: NSError?) -> Void){
         let url = flickrURLFromParameters(parameters)

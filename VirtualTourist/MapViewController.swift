@@ -25,11 +25,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // Do not worry about this initializer. I has to be implemented
     // because of the way Swift interfaces with an Objective C
     // protocol called NSArchiving. It's not relevant.
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+//   required init?(coder aDecoder: NSCoder) {
+ //       super.init(coder: aDecoder)
+  //  }
 
-    
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
