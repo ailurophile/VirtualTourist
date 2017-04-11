@@ -19,16 +19,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     
-    // MARK: Initializers
-
-    
-    // Do not worry about this initializer. I has to be implemented
-    // because of the way Swift interfaces with an Objective C
-    // protocol called NSArchiving. It's not relevant.
-//   required init?(coder aDecoder: NSCoder) {
- //       super.init(coder: aDecoder)
-  //  }
-
 
 
     override func viewDidLoad() {
@@ -41,7 +31,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.addGestureRecognizer(holdTouch)
         // Retrieve user's last used map settings
         let mapSettings = UserDefaults.standard.value(forKey: Keys.SavedMapSettings) as! [String: Double]
-        print(mapSettings)
         mapView.centerCoordinate = CLLocationCoordinate2DMake(mapSettings[Keys.LatKey]!, mapSettings[Keys.LonKey]!)
         let span = MKCoordinateSpan(latitudeDelta: mapSettings[Keys.LatDeltasKey]!, longitudeDelta: mapSettings[Keys.LonDeltaKey]!)
         mapView.region.span = span
@@ -85,17 +74,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             let newPin = Pin(entity: Pin.entity(), insertInto: context)
             newPin.latitude = coordinates.latitude
             newPin.longitude = coordinates.longitude
-            print("just created a Pin \(newPin)")
-            storedPins.append(newPin)  // i dont think i should do this???
+            storedPins.append(newPin)
             //save Pin
             delegate.saveContext()
         }
     }
     // This delegate method is implemented to respond to taps. It presents the Photos view controller.
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
-        print("User selected pin ")
         let c = view.annotation?.coordinate
-//        print(c)
         mapView.deselectAnnotation(view.annotation, animated: false)
 
         performSegue(withIdentifier: "ShowPhotos", sender: c)
@@ -180,10 +166,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: PinProperties.Lat, ascending: true),NSSortDescriptor(key: PinProperties.Lon, ascending: true)]
         do {
             let results = try delegate.persistentContainer.viewContext.fetch(fetchRequest) as! [Pin]
-            //            print("results = \(results)")
-            for pin in results{
+/*            for pin in results{
                 print("pin at coordinates: \(pin.latitude),\(pin.longitude)")
-            }
+            }*/
             storedPins = results
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
@@ -199,7 +184,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
  
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
     }
 
 

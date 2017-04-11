@@ -37,7 +37,7 @@ extension FlickrClient{
     struct ParameterValues {
         static let APIKey = "cd5bcb2f1858e7619add5bf3d73137fa"
         static let DisableJSONCallback = 1
-        static let ExtendedRadius = 10    // default is 5Km
+        static let ExtendedRadius = 20    // default is 5Km
         static let FindPhotos = "flickr.photos.search"
         static let Format = "json"
         static let SmallPicURL = "url_m"

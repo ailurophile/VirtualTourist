@@ -30,9 +30,8 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     var photoImage = #imageLiteral(resourceName: "turtle.jpg")
     var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult>? {
         didSet {
-            // Whenever the frc changes, we execute the search and
-            // reload the table
-            fetchedResultsController?.delegate = self
+            // Whenever the frc changes execute the search
+
             executeSearch()
 
         }
@@ -40,6 +39,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        fetchedResultsController?.delegate = self
         editingAlbum = false
         albumButton.isEnabled = false
         mapView.centerCoordinate = coordinate
@@ -132,6 +132,32 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             self.photoURLS = pics
             print(pics)
             
+            //If no pictures found use wider search radius
+            if pics.count == 0 && radius == nil {
+                FlickrClient.sharedInstance().getPhotos(latitude: latitude , longitude: longitude, page: page, radius:FlickrClient.ParameterValues.ExtendedRadius, completionHandler: {(pages,photos, error) in
+                    guard error == nil else{
+                        notifyUser(self, message: (error!.localizedDescription))
+                        return
+                    }
+                    guard let pics = photos else{
+                        notifyUser(self, message: "No photos returned")
+                        return
+                    }
+                    
+                    self.numberOfPages = pages
+                    
+                    self.photoURLS = pics
+                    print(pics)
+                    if pics.count == 0{
+                        DispatchQueue.main.async {
+                            self.label.text = "No images for pin"
+                        }
+                    }
+                })
+                
+            
+            }
+            
             if(createNewAlbum){
             //create Photo objects for new album
                 DispatchQueue.global().async {
@@ -169,11 +195,9 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             //Check if unused urls from previous download
             if  currentIndex  >= photoURLS.count   {
                 currentPage += 1
-//                if (currentPage > numberOfPages) && (photoURLS.count != 0) {
                 if (currentPage > numberOfPages) {
                     
                    // inform user no more pictures
-                    print("no more pictures")
                     self.label.text = "No images for pin"
         
                 }
@@ -186,7 +210,6 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             }
             else{
             //use previously stored URLs
-//                getImages()
                 createNewAlbum()
             }
             
@@ -252,19 +275,16 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             //get next url
             cell.activityIndicator.startAnimating()
             let url = newAlbumURLs.popLast()
-            print("url to get image from: \(url)")
             // download image from FLickr
             FlickrClient.sharedInstance().getImage(urlString: url!, completionHandler: {(image,error) in
                 guard error == nil else{
                     notifyUser(self, message: "Error downloading image")
-                    print(error)
                     return
                     
                 }
                 DispatchQueue.main.async {
                     cell.imageView.image = UIImage(data: image as! Data)
                     photo.image = image as? NSData
-                    print("is the image nil?\(photo.image == nil)")
                     cell.activityIndicator.stopAnimating()
                     //Get the persistent container
                     let delegate = UIApplication.shared.delegate as! AppDelegate
@@ -305,7 +325,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     
     
     //MARK: mapView delegate
-    
+    //User can delete all photos and the associated pin by tapping on the pin and selecting "Delete" when the Alert is displayed
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
      
      
@@ -346,7 +366,7 @@ extension PhotoViewController: NSFetchedResultsControllerDelegate{
             do {
                 try fc.performFetch()
             } catch let e as NSError {
-                print("Error while trying to perform a search: \n\(e)\n\(fetchedResultsController)")
+                sendAlert(self, message: "Error performing search: \(e)")
             }
         }
     }
