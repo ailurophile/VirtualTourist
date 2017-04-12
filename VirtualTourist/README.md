@@ -5,7 +5,7 @@ The VirtualTourist app was developed as part of the Udacity iOS developer nanode
 ## Features
 
 * allows user to pan and zoom map, saving the last selected values between launches
-* allows user to drop a pin at a location on the map for which they would like to see photos by touching the map with a single finger for 2 seconds
+* allows user to drop a pin at a location on the map for which they would like to see photos by touching the map with a single finger for 2 seconds, pin may be moved via dragging until finger is lifted at which case the pin location is set
 * select a pin by tapping it to see the saved photos for that location or download and save 18 pictures from Flickr tagged with that location
 * if selected location returns no images the search radius is doubled and a second attempt is made
 * download a different set of photos from Flickr by pressing the New Collection button

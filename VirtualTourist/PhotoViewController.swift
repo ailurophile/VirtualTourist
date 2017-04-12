@@ -267,7 +267,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         // Find the right Photo for this indexpath & use it's image if one is present
         let photo = fetchedResultsController!.object(at: indexPath) as! Photo
         if let image = photo.image{
-            photoImage = UIImage(data: image as! Data)!
+            photoImage = UIImage(data: image as Data)!
         }
         else{
             photoImage = #imageLiteral(resourceName: "turtle.jpg")  //set placeholder image

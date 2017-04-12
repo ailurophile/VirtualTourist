@@ -16,6 +16,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     var storedPins : [Pin]!
     var annotations = [MKAnnotation]()
+    var annotation = MKPointAnnotation()
     
     
     
@@ -59,14 +60,26 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         return pinView
     }
     
-    // This method will add a pin to the map when user holds touch for 2 seconds
+    // This method will add a pin to the map when user holds touch for 2 seconds, and persist it on finger lift
     func dropPin(gestureRecognizer:UIGestureRecognizer){
         if gestureRecognizer.state == UIGestureRecognizerState.began{
             let location = gestureRecognizer.location(in: mapView)
-            let annotation = MKPointAnnotation()
             let coordinates = mapView.convert(location, toCoordinateFrom: mapView)
             annotation.coordinate = coordinates
             mapView.addAnnotation(annotation)
+            
+        }
+        if gestureRecognizer.state == UIGestureRecognizerState.changed{
+            let location = gestureRecognizer.location(in: mapView)
+            let coordinates = mapView.convert(location, toCoordinateFrom: mapView)
+            annotation.coordinate = coordinates
+            
+        }
+        if gestureRecognizer.state == UIGestureRecognizerState.ended{
+            let location = gestureRecognizer.location(in: mapView)
+            let coordinates = mapView.convert(location, toCoordinateFrom: mapView)
+            annotation.coordinate = coordinates
+            mapView.reloadInputViews()
             //Get the persistent container
             let delegate = UIApplication.shared.delegate as! AppDelegate
             let context = delegate.persistentContainer.viewContext
@@ -78,6 +91,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             //save Pin
             delegate.saveContext()
         }
+        
     }
     // This delegate method is implemented to respond to taps. It presents the Photos view controller.
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
