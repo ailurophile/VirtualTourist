@@ -96,7 +96,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // This delegate method is implemented to respond to taps. It presents the Photos view controller.
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
         let c = view.annotation?.coordinate
-        mapView.deselectAnnotation(view.annotation, animated: false)
+        mapView.deselectAnnotation(view.annotation, animated: false)  //reset so user can select again
 
         performSegue(withIdentifier: "ShowPhotos", sender: c)
     }

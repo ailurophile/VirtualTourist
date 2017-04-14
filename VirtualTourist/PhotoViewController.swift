@@ -53,7 +53,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         //check if any pictures in memory for this pin
         // if not, get pictures from Flickr
         executeSearch()
-        print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
+//        print("number of items returned: \(fetchedResultsController?.fetchedObjects?.count)")
         if fetchedResultsController?.fetchedObjects?.count == 0 || photoURLS.count == 0{
             
             getNewURLs(latitude: coordinate.latitude , longitude: coordinate.longitude , page: nil, radius: nil, createNewAlbum: fetchedResultsController?.fetchedObjects?.count == 0)
@@ -81,7 +81,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 context.delete(pic as! NSManagedObject)
             }
             delegate.saveContext()
-            print("all photos deleted")
+//            print("all photos deleted")
             executeSearch()
             collectionView.reloadData()
         }
@@ -92,19 +92,19 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         //Get the persistent container
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
+        fillAlbumLoader()
         let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count-currentIndex)
+
+        DispatchQueue.main.async {
+            for _ in 0..<albumSize{
+                //create Photo object and set realtionship to pin
+                let newPhoto = Photo(entity:Photo.entity(), insertInto: context)
+                newPhoto.pin = self.pin
+                
+                }
         
-        for i in 0..<albumSize{
-            newAlbumURLs.append(photoURLS[currentIndex+i]) //copy image url to array for consumption by collectionView cell
-            //create Photo object and set realtionship to pin
-            let newPhoto = Photo(entity:Photo.entity(), insertInto: context)
-            newPhoto.pin = pin
-            
-            }
-        
-            DispatchQueue.main.async {
            //update user interface
-//                delegate.saveContext()
+
                 self.albumButton.isEnabled = true
                 self.executeSearch()
                 self.collectionView.reloadData()
@@ -112,7 +112,15 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             }
             
 
-        currentIndex += albumSize
+        currentIndex += albumSize  //update pointer for  next album request
+    }
+    //This method copies one album's worth of image URLs to newAlbumURLs array used for loading a new album
+    func fillAlbumLoader(){
+        let albumSize = min(Constants.PhotosPerAlbum,photoURLS.count-currentIndex)
+        newAlbumURLs.removeAll()
+        for i in 0..<albumSize{
+            newAlbumURLs.append(self.photoURLS[self.currentIndex+i]) //copy image url to array for consumption by collectionView cell
+        }
     }
     
     //This method uses the FlickrClient to obtain new photo URLs
@@ -157,12 +165,11 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 
             
             }
-            
+            self.fillAlbumLoader()
             if(createNewAlbum){
             //create Photo objects for new album
-                DispatchQueue.global().async {
-                    self.createNewAlbum()
-                }
+                self.createNewAlbum()
+
             }
         })
 
@@ -179,7 +186,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                 context.delete(pic)
             }
             delegate.saveContext()
-            print("\(storedPhotosToBeDeleted.count) photos deleted")
+//            print("\(storedPhotosToBeDeleted.count) photos deleted")
             executeSearch()
             collectionView.reloadData()
             albumButton.setTitle(ButtonText.NotEditing, for: .normal)
@@ -271,6 +278,10 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         }
         else{
             photoImage = #imageLiteral(resourceName: "turtle.jpg")  //set placeholder image
+            if newAlbumURLs.count == 0{
+                
+                return cell  //this might occur if user selected back while album downloading
+            }
 
             //get next url
             cell.activityIndicator.startAnimating()
@@ -327,9 +338,9 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     //MARK: mapView delegate
     //User can delete all photos and the associated pin by tapping on the pin and selecting "Delete" when the Alert is displayed
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView){
-     
-     
-     
+         mapView.deselectAnnotation(view.annotation, animated: false)  //reset so user can select again
+    
+        
      let controller = UIAlertController(title: "Alert", message: "Do you wish to delete this pin and it's associated photos?", preferredStyle: .alert)
      let deleteAction = UIAlertAction(title: "DELETE", style: .destructive) { action in
 
@@ -339,6 +350,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         let delegate = UIApplication.shared.delegate as! AppDelegate
         let context = delegate.persistentContainer.viewContext
         context.delete(self.pin)
+
         NotificationCenter.default.post(name: Notification.Name(rawValue: Constants.ModelUpdatedNotificationKey), object: self)
         self.navigationController?.popViewController(animated: false)
 
