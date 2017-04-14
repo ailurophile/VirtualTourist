@@ -130,7 +130,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
             self.numberOfPages = pages
             
             self.photoURLS = pics
-            print(pics)
+//            print(pics)
             
             //If no pictures found use wider search radius
             if pics.count == 0 && radius == nil {
@@ -147,7 +147,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
                     self.numberOfPages = pages
                     
                     self.photoURLS = pics
-                    print(pics)
+//                    print(pics)
                     if pics.count == 0{
                         DispatchQueue.main.async {
                             self.label.text = "No images for pin"

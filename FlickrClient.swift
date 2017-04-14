@@ -30,7 +30,7 @@ class FlickrClient: NSObject{
                 completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
                 return
             }
-            print(results)
+//            print(results)
             guard let data = results as! [String:Any]? else {
                 let userInfo = [NSLocalizedDescriptionKey : "No photos returned"]
                 completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
