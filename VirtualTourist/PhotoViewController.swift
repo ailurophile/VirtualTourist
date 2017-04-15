@@ -17,6 +17,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var enlargeButton: UIButton!
     var coordinate = CLLocationCoordinate2D(latitude: DefaultValues.Lat, longitude: DefaultValues.Lon)
     var pin: Pin! = nil
     let reuseIdentifier = PhotoProperties.ReuseIdentifier
@@ -49,6 +50,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
         label.text = ""
+        enlargeButton.isEnabled = false
         
         //check if any pictures in memory for this pin
         // if not, get pictures from Flickr
@@ -242,7 +244,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if (!editingAlbum){
-            
+            enlargeButton.isEnabled = true
             editingAlbum = true
             //change button text
             albumButton.setTitle(ButtonText.Editing, for: .normal)
@@ -266,6 +268,7 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
         if storedPhotosToBeDeleted.count == 0{
             editingAlbum = false
             albumButton.setTitle(ButtonText.NotEditing, for: .normal)
+            enlargeButton.isEnabled = false
         }
         
     }
@@ -364,7 +367,18 @@ class PhotoViewController: UIViewController, UICollectionViewDelegate, UICollect
      
      }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let controller = segue.destination as! EnlargementViewController
+        
+        if segue.identifier == "enlarge"{
+            
+            controller.imageToBlowup = UIImage(data: (storedPhotosToBeDeleted.last?.image)! as Data)
+        }
+        
+    }
+    
 }
+
 
 
 

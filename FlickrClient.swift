@@ -45,7 +45,7 @@ class FlickrClient: NSObject{
                 return
             }
             
-            print("PhotoArray count = \(photoArray.count)")
+//            print("PhotoArray count = \(photoArray.count)")
             var photoURLS = [String]()
             for pic in photoArray{
                 photoURLS.append(pic[FlickrClient.ParameterValues.SquarePicURL] as! String)

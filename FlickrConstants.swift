@@ -41,7 +41,7 @@ extension FlickrClient{
         static let FindPhotos = "flickr.photos.search"
         static let Format = "json"
         static let SmallPicURL = "url_m"
-        static let SquarePicURL = "url_s"
+        static let SquarePicURL = "url_q"
         static let Status = "stat"
         static let Title = "title"
         static let Photos = "photos"

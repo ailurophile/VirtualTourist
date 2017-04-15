@@ -15,6 +15,7 @@
 		D75B75571E8A214800AD2794 /* FlickrConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75B75561E8A214300AD2794 /* FlickrConstants.swift */; };
 		D78F583E1E77011E00CC9956 /* notifyUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F583D1E77011E00CC9956 /* notifyUser.swift */; };
 		D78F584B1E7755B000CC9956 /* FlickrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78F584A1E7755B000CC9956 /* FlickrClient.swift */; };
+		D79B37BF1EA16F6A00BE0975 /* EnlargementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79B37BE1EA16F6A00BE0975 /* EnlargementViewController.swift */; };
 		D7A3A4F41E9B14D900DA39A7 /* turtle.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D7A3A4F31E9B14D800DA39A7 /* turtle.jpg */; };
 		D7ACF53C1E7332C800A6033C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ACF53B1E7332C800A6033C /* AppDelegate.swift */; };
 		D7ACF53E1E7332C800A6033C /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ACF53D1E7332C800A6033C /* MapViewController.swift */; };
@@ -37,6 +38,7 @@
 		D75B75561E8A214300AD2794 /* FlickrConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrConstants.swift; sourceTree = "<group>"; };
 		D78F583D1E77011E00CC9956 /* notifyUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notifyUser.swift; sourceTree = "<group>"; };
 		D78F584A1E7755B000CC9956 /* FlickrClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrClient.swift; sourceTree = "<group>"; };
+		D79B37BE1EA16F6A00BE0975 /* EnlargementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnlargementViewController.swift; path = VirtualTourist/EnlargementViewController.swift; sourceTree = "<group>"; };
 		D7A3A4F31E9B14D800DA39A7 /* turtle.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = turtle.jpg; sourceTree = "<group>"; };
 		D7ACF5381E7332C800A6033C /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7ACF53B1E7332C800A6033C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 		D72E16FF1E808D43001570D2 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				D79B37BE1EA16F6A00BE0975 /* EnlargementViewController.swift */,
 				D72E17001E808D9D001570D2 /* PhotoCollectionViewCell.swift */,
 			);
 			name = View;
@@ -256,6 +259,7 @@
 				D7ACF5871E76198B00A6033C /* PhotoViewController.swift in Sources */,
 				D78F584B1E7755B000CC9956 /* FlickrClient.swift in Sources */,
 				D72E170B1E8DEB65001570D2 /* Pin+CoreDataProperties.swift in Sources */,
+				D79B37BF1EA16F6A00BE0975 /* EnlargementViewController.swift in Sources */,
 				D7ACF5441E7332C800A6033C /* VirtualTourist.xcdatamodeld in Sources */,
 				D71CC7631E7CC78C001D7B75 /* constants.swift in Sources */,
 			);

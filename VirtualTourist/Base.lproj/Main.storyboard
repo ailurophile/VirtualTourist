@@ -114,12 +114,19 @@
                                     <outlet property="dataSource" destination="d6a-WV-Q9K" id="FnV-7N-nbN"/>
                                 </connections>
                             </collectionView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="can you see me?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WiL-I8-yVa">
-                                <rect key="frame" x="96" y="273.5" width="128" height="20.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WiL-I8-yVa">
+                                <rect key="frame" x="160" y="284" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bn6-1u-83d">
+                                <rect key="frame" x="258" y="538" width="52" height="30"/>
+                                <state key="normal" title="Enlarge"/>
+                                <connections>
+                                    <segue destination="ZFk-yj-LFA" kind="show" identifier="enlarge" id="3j1-yJ-erP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -128,11 +135,13 @@
                             <constraint firstAttribute="trailing" secondItem="mwG-D4-wTh" secondAttribute="trailing" id="DCq-9d-Odm"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="top" secondItem="jEM-IC-Hhv" secondAttribute="bottom" id="JHA-tQ-FQh"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="Mzy-YF-db1"/>
+                            <constraint firstAttribute="trailing" secondItem="Bn6-1u-83d" secondAttribute="trailing" constant="10" id="Qi0-ta-oPC"/>
                             <constraint firstItem="cXJ-aJ-EtY" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="WF3-rQ-npO"/>
                             <constraint firstItem="jEM-IC-Hhv" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="WGU-3W-VKu"/>
                             <constraint firstItem="WiL-I8-yVa" firstAttribute="centerX" secondItem="DJx-ui-NhT" secondAttribute="centerX" id="ZPf-F5-BtU"/>
                             <constraint firstItem="Q5v-dn-bs2" firstAttribute="top" secondItem="jEM-IC-Hhv" secondAttribute="bottom" id="fmq-fY-M8y"/>
                             <constraint firstItem="cXJ-aJ-EtY" firstAttribute="top" secondItem="mwG-D4-wTh" secondAttribute="bottom" id="kZZ-CR-Ok8"/>
+                            <constraint firstItem="50q-3a-izc" firstAttribute="top" secondItem="Bn6-1u-83d" secondAttribute="bottom" id="khE-Mk-LfL"/>
                             <constraint firstItem="WiL-I8-yVa" firstAttribute="centerY" secondItem="DJx-ui-NhT" secondAttribute="centerY" id="mYm-AW-l4v"/>
                             <constraint firstItem="mwG-D4-wTh" firstAttribute="leading" secondItem="DJx-ui-NhT" secondAttribute="leading" id="qUC-dC-iFw"/>
                             <constraint firstItem="mwG-D4-wTh" firstAttribute="top" secondItem="Q5v-dn-bs2" secondAttribute="bottom" id="qZ4-Pq-bIR"/>
@@ -144,6 +153,7 @@
                     <connections>
                         <outlet property="albumButton" destination="cXJ-aJ-EtY" id="q7a-1w-utz"/>
                         <outlet property="collectionView" destination="mwG-D4-wTh" id="d10-3S-Yff"/>
+                        <outlet property="enlargeButton" destination="Bn6-1u-83d" id="Hjk-XR-0II"/>
                         <outlet property="flowLayout" destination="1aF-ht-uH2" id="qk4-rF-DJb"/>
                         <outlet property="label" destination="WiL-I8-yVa" id="4hd-qm-jrs"/>
                         <outlet property="mapView" destination="Q5v-dn-bs2" id="uyr-S5-h0N"/>
@@ -152,6 +162,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LeD-49-lNs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1074.375" y="66.549295774647888"/>
+        </scene>
+        <!--Enlargement View Controller-->
+        <scene sceneID="bRJ-Ae-ynb">
+            <objects>
+                <viewController id="ZFk-yj-LFA" customClass="EnlargementViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="v7A-bL-Oc2"/>
+                        <viewControllerLayoutGuide type="bottom" id="pSH-ou-7Xg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Uqx-ul-xkP">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="150" placeholderIntrinsicHeight="150" translatesAutoresizingMaskIntoConstraints="NO" id="GfX-8O-9om">
+                                <rect key="frame" x="85" y="209" width="150" height="150"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="GfX-8O-9om" firstAttribute="centerY" secondItem="Uqx-ul-xkP" secondAttribute="centerY" id="Cvy-tR-yTV"/>
+                            <constraint firstItem="GfX-8O-9om" firstAttribute="centerX" secondItem="Uqx-ul-xkP" secondAttribute="centerX" id="ZFF-R4-1Be"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="GfX-8O-9om" id="HpG-M2-U4b"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Amx-ML-CiT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1959" y="67"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yR7-nz-Gtu">
