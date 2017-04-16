@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -175,14 +176,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="150" placeholderIntrinsicHeight="150" translatesAutoresizingMaskIntoConstraints="NO" id="GfX-8O-9om">
-                                <rect key="frame" x="85" y="209" width="150" height="150"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" layoutMarginsFollowReadableWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GfX-8O-9om">
+                                <rect key="frame" x="60" y="209" width="200" height="200"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="GfX-8O-9om" firstAttribute="centerY" secondItem="Uqx-ul-xkP" secondAttribute="centerY" id="Cvy-tR-yTV"/>
+                            <constraint firstItem="GfX-8O-9om" firstAttribute="centerY" secondItem="Uqx-ul-xkP" secondAttribute="centerY" constant="25" id="Cvy-tR-yTV"/>
+                            <constraint firstItem="GfX-8O-9om" firstAttribute="leading" secondItem="Uqx-ul-xkP" secondAttribute="leadingMargin" constant="44" id="Qzp-gT-zQ9"/>
                             <constraint firstItem="GfX-8O-9om" firstAttribute="centerX" secondItem="Uqx-ul-xkP" secondAttribute="centerX" id="ZFF-R4-1Be"/>
+                            <constraint firstItem="GfX-8O-9om" firstAttribute="top" secondItem="v7A-bL-Oc2" secondAttribute="bottom" constant="145" id="zg7-yv-cAd"/>
                         </constraints>
                     </view>
                     <connections>

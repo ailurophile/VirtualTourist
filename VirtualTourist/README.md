@@ -11,5 +11,6 @@ The VirtualTourist app was developed as part of the Udacity iOS developer nanode
 * download a different set of photos from Flickr by pressing the New Collection button
 * once all photos for a given location have been viewed, pressing the New Collection Button will result in an empty album showing the message 'No images for pin'
 * select and remove photos by tapping them and selecting the Remove Selected Photos button
+* enlarge selected photo by selecting Enlarge button
 * remove a photo album and pin by tapping the pin in the photo album view and selecting delete from the resulting Alert
 * pins and photos are retained between app launches
