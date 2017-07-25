@@ -27,7 +27,7 @@ class FlickrClient: NSObject{
         queryFlickr( parameters as [String : AnyObject], completionHandlerForQuery: {(results,error) in
             guard error == nil else{
                 let userInfo = [NSLocalizedDescriptionKey : error?.localizedDescription]
-                completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: userInfo))
+                completionHandler(0, nil, NSError(domain: "getPhotos", code: 1, userInfo: (userInfo as Any as! [AnyHashable : Any])))
                 return
             }
 //            print(results)
